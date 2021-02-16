@@ -3,6 +3,7 @@ FROM debian:stable
 WORKDIR /root
 
 COPY flash.sh .
+RUN chmod +x flash.sh
 
 ARG DEBIAN_FRONTEND=noninteractive
 
