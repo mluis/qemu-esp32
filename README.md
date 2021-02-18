@@ -1,6 +1,6 @@
 # ESP32 Emulated Environment
 
-An Qemu-based emulated environment for the Espressif ESP32 board on 🐳 Docker.
+An Qemu-based emulation environment for the Espressif ESP32 board on 🐳 Docker.
 
 ## Building and Running
 
