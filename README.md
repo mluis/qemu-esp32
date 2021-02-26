@@ -16,9 +16,6 @@ An Qemu-based emulation environment for the Espressif ESP32 board on Docker  üê
 
 ## Sample Output
 
-<<<<<<< HEAD
-`
-=======
 ```
 >>>>>>> 8eb28ff0ecc922bf06f6cb5c3cd1a425e844bb12
 rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
@@ -79,8 +76,4 @@ I (20985) qemu-esp32: Registering URI handlers
  =======================================================
  |               HTTP SERVER ON 80                     |
  =======================================================
-<<<<<<< HEAD
-`
-=======
 ```
->>>>>>> 8eb28ff0ecc922bf06f6cb5c3cd1a425e844bb12
