@@ -17,7 +17,6 @@ An Qemu-based emulation environment for the Espressif ESP32 board on Docker  ðŸ
 ## Sample Output
 
 ```
->>>>>>> 8eb28ff0ecc922bf06f6cb5c3cd1a425e844bb12
 rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
 configsip: 0, SPIWP:0xee
 clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
