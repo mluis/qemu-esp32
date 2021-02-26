@@ -8,6 +8,9 @@ An Qemu-based emulation environment for the Espressif ESP32 board on Docker  üê
  - `$ docker run --name qemu-esp32 --rm -i -t qemu-esp32 bash`
  - `$ idf`
 
+## Optional: Before compiling one might want to configure dependencies
+ - `$ make -C program menuconfig`
+
 ## Running the example
 
  - `$ make -C program`
