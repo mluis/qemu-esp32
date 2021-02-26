@@ -2,6 +2,13 @@
 
 An Qemu-based emulation environment for the Espressif ESP32 board on Docker  🐳 .
 
+## TL;DR
+ - `$ docker run -it mluis/qemu-esp32`
+ - `$ idf`
+ - `$ make -C program`
+ - `$ ./flash.sh program/build/emulation.bin`
+ - `$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80  -s`
+
 ## Building and Running
 
  - `$ docker build . -t qemu-esp32`
