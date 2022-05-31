@@ -17,6 +17,7 @@
 #include "esp_event.h"
 #include "esp_vfs_fat.h"
 #include "esp_wifi.h"
+#include "esp_mac.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
@@ -291,7 +292,6 @@ static void initialize_wifi(void)
     esp_wifi_connect();
 }
 const int CONNECTED_BIT = BIT0;
-static EventGroupHandle_t wifi_event_group;
 
 void app_main(void)
 {
