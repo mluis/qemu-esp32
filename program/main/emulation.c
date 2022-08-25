@@ -19,6 +19,9 @@
 #include "esp_wifi.h"
 #include "esp_mac.h"
 #include "esp_err.h"
+#include "esp_netif.h"
+#include "esp_eth.h"
+#include "esp_mac.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "sdmmc_cmd.h"
@@ -271,26 +274,51 @@ static void initialize_nvs(void)
     ESP_ERROR_CHECK(err);
 }
 
-esp_netif_ip_info_t ip_info;
-/* Initialize wifi with tcp/ip adapter */
-static void initialize_wifi(void)
+
+static bool started = false;
+static EventGroupHandle_t eth_event_group;
+static const int GOTIP_BIT = BIT0;
+static esp_netif_ip_info_t ip;
+static esp_eth_handle_t eth_handle = NULL;
+static esp_netif_t *eth_netif = NULL;
+
+static void event_handler(void *arg, esp_event_base_t event_base,
+                          int32_t event_id, void *event_data)
 {
-
-    ESP_ERROR_CHECK(esp_netif_init());
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-
-    esp_netif_set_ip4_addr(&ip_info.ip, 172, 17 , 0, 2);
-    esp_netif_set_ip4_addr(&ip_info.gw, 172, 17 , 0, 1);
-    esp_netif_set_ip4_addr(&ip_info.netmask, 255, 255 , 255, 0);
-
-    ESP_LOGI(TAG, "- IPv4 address: " IPSTR, IP2STR(&ip_info.ip));
-
-    esp_wifi_connect();
+    if (event_base == ETH_EVENT && event_id == ETHERNET_EVENT_START) {
+        started = true;
+    } else if (event_base == ETH_EVENT && event_id == ETHERNET_EVENT_STOP) {
+        xEventGroupClearBits(eth_event_group, GOTIP_BIT);
+        started = false;
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_ETH_GOT_IP) {
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *) event_data;
+        memcpy(&ip, &event->ip_info, sizeof(ip));
+        xEventGroupSetBits(eth_event_group, GOTIP_BIT);
+    }
 }
+void register_ethernet(void)
+{
+    eth_event_group = xEventGroupCreate();
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
+    eth_netif = esp_netif_new(&cfg);
+
+    eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
+    eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
+    esp_eth_mac_t *mac = esp_eth_mac_new_openeth(&mac_config);
+
+    esp_eth_phy_t *phy = esp_eth_phy_new_dp83848(&phy_config);
+
+    esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);
+    ESP_ERROR_CHECK(esp_eth_driver_install(&config, &eth_handle));
+    ESP_ERROR_CHECK(esp_netif_attach(eth_netif, esp_eth_new_netif_glue(eth_handle)));
+    ESP_ERROR_CHECK(esp_event_handler_register(ETH_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_eth_start(eth_handle));
+
+}
+
 const int CONNECTED_BIT = BIT0;
 
 void app_main(void)
@@ -300,8 +328,8 @@ void app_main(void)
 
     initialize_nvs();
 
-    /* Initialize WiFi */
-    initialize_wifi();
+    /* Initialize ethernet dp83848 / openeth for use in qemu */
+    register_ethernet();
 
     static httpd_handle_t server = NULL;
     /* Start the server for the first time */
