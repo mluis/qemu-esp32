@@ -14,25 +14,31 @@
  $ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80
 ```
 
-## Building and Running
+### Building and Running
+```
+$ docker build . -t qemu-esp32
+$ docker run --name qemu-esp32 --rm -i -p 8080:80 -t qemu-esp32 bash
+$ idf
+```
 
- - `$ docker build . -t qemu-esp32`
- - `$ docker run --name qemu-esp32 --rm -i -p 8080:80 -t qemu-esp32 bash`
- - `$ idf`
+### Optional: Before compiling one might want to configure dependencies
+```
+$ idf.py build -C program menuconfig
+```
 
-## Optional: Before compiling one might want to configure dependencies
- - `$ idf.py build -C program menuconfig`
+### Running the example
+```
+$ idf.py build -C program
+$ ./flash.sh program/build/emulation.bin
+$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80
+```
 
-## Running the example
+#### Point your browser to
+```
+http://localhost:8080/hello
+```
 
- - `$ idf.py build -C program`
- - `$ ./flash.sh program/build/emulation.bin`
- - `$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80`
-
-## Point your browser to
- - `http://localhost:8080/hello`
-
-## Sample Output
+### Sample Output
 ```
 Adding SPI flash device
 ets Jul 29 2019 12:21:46
