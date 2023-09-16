@@ -1,13 +1,18 @@
-# ESP32 Emulated Environment (WIP)
+<p align="center">
+ <img style="" src="https://repository-images.githubusercontent.com/339300515/53c261b1-bbb2-4ea2-a97c-bab8b5938282" width="256"/>
+ <p align="center">
+  A QEMU-based emulation environment for the Espressif ESP32 board on Docker  🐳 . (WIP)
+ </p>
+</p>
 
-A QEMU-based emulation environment for the Espressif ESP32 board on Docker  🐳 .
-
-## TL;DR
- - `$ docker run -it -p 8080:80 mluis/qemu-esp32`
- - `$ idf`
- - `$ idf.py build -C program`
- - `$ ./flash.sh program/build/emulation.bin`
- - `$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80  -s`
+### TL;DR
+```
+ $ docker run -it -p 8080:80 mluis/qemu-esp32
+ $ idf
+ $ idf.py build -C program
+ $ ./flash.sh program/build/emulation.bin
+ $ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80
+```
 
 ## Building and Running
 
@@ -22,7 +27,7 @@ A QEMU-based emulation environment for the Espressif ESP32 board on Docker  🐳
 
  - `$ idf.py build -C program`
  - `$ ./flash.sh program/build/emulation.bin`
- - `$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80  -s`
+ - `$ qemu-system-xtensa -nographic -M esp32 -m 4 -drive file=flash.bin,if=mtd,format=raw -nic user,model=open_eth,hostfwd=tcp::80-:80`
 
 ## Point your browser to
  - `http://localhost:8080/hello`
